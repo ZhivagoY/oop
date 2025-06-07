@@ -3,7 +3,6 @@ import os
 from enum import Enum
 from typing import Tuple, Dict, List
 
-
 class Color(Enum):
     RED = "\033[31m"
     GREEN = "\033[32m"
@@ -13,8 +12,7 @@ class Color(Enum):
     MAGENTA = "\033[35m"
     RESET = "\033[0m"
 
-
-FONT_FILE = "font.json"
+FONT_FILE = "lab2/font.json"
 
 if os.path.exists(FONT_FILE):
     with open(FONT_FILE, "r", encoding="utf-8") as file:
@@ -87,17 +85,17 @@ class Printer:
 
 if __name__ == "__main__":
     # Статический вызов с разными размерами шрифта
-    Printer.print("SMALL", Color.RED, (5, 5), "■", 1)
-    Printer.print("MEDIUM", Color.GREEN, (5, 12), "●", 2)
-    Printer.print("LARGE", Color.BLUE, (5, 25), "▲", 3)
+    Printer.print("HELLO", Color.GREEN, (5, 12), "●", 2)
+    Printer.print("WORLD", Color.BLUE, (5, 25), "▲", 3)
+    Printer.print("SPACE", Color.RED, (10, 40), "●", 1)
     
     # Использование контекстного менеджера с разными размерами
-    with Printer(Color.CYAN, (5, 40), "♥", 1) as small_printer:
-        small_printer.print_text("LOVE")
+    with Printer(Color.CYAN, (10, 40), "♥", 1) as small_printer:
+        small_printer.print_text("HELLO")
     
-    with Printer(Color.MAGENTA, (10, 40), "♦", 2) as medium_printer:
-        medium_printer.print_text("LOVE")
+    with Printer(Color.MAGENTA, (20, 40), "♦", 2) as medium_printer:
+        medium_printer.print_text("HELLO")
     
-    with Printer(Color.YELLOW, (20, 40), "♣", 3) as large_printer:
-        large_printer.print_text("LOVE")
+    with Printer(Color.YELLOW, (30, 40), "♣", 3) as large_printer:
+        large_printer.print_text("HELLO")
     
