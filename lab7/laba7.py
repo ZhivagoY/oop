@@ -95,6 +95,14 @@ class ServiceARelease(IServiceA):
         return 'A release'
 
 
+class ParameterizedService(IServiceA): # Добавил новый класс, который будет зависеть от параметров
+    def __init__(self, prefix: str, suffix: str):
+        self._prefix = prefix
+        self._suffix = suffix
+        
+    def do_a(self) -> str:
+        return f"{self._prefix}ParameterizedA{self._suffix}"
+
 class ServiceBDebug(IServiceB):
     def __init__(self, a_service: IServiceA):
         self._a = a_service
@@ -141,6 +149,17 @@ config2.register(
     LifeStyle.PER_REQUEST
 )
 
+config3 = Injector()
+#Регистрируем ParameterizedService с параметрами prefix и suffix
+config3.register(
+    IServiceA, 
+    ParameterizedService, 
+    LifeStyle.PER_REQUEST,
+    params={'prefix': '[[', 'suffix': ']]'}
+)
+config3.register(IServiceB, ServiceBDebug, LifeStyle.SCOPED)
+config3.register(IServiceC, ServiceCDebug, LifeStyle.SINGLETON)
+
 def demo(injector: Injector):
     print('---- New Request ----')
     a1 = injector.get_instance(IServiceA)
@@ -165,3 +184,6 @@ if __name__ == '__main__':
 
     print('\n== Config 2 ==')
     demo(config2)
+
+    print('\n== Config 3 (с параметрами) ==')
+    demo(config3)

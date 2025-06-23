@@ -7,25 +7,29 @@ class LogFilterProtocol(Protocol):
 class LogHandlerProtocol(Protocol):
     def handle(self, text: str) -> None: ...
 
-class SimpleLogFilter:
+class SimpleLogFilter(LogFilterProtocol):
     def __init__(self, pattern: str):
         self.pattern = pattern
 
     def match(self, text: str) -> bool:
         return self.pattern in text
 
-class ReLogFilter:
-    def __init__(self, pattern: str):
-        self.pattern = re.compile(pattern)
+class ReLogFilter(LogFilterProtocol):
+    def __init__(self, pattern: str) -> None:
+        self.regex = None
+        try:
+            self.regex = re.compile(pattern)
+        except re.error as e:
+            print(f'regex error: {e}')
 
     def match(self, text: str) -> bool:
-        return bool(self.pattern.search(text))
+        return bool(self.regex.search(text))
 
-class ConsoleHandler:
+class ConsoleHandler(LogHandlerProtocol):
     def handle(self, text: str) -> None:
         print(text)
 
-class FileHandler:
+class FileHandler(LogHandlerProtocol):
     def __init__(self, filename: str):
         self.filename = filename
 
@@ -36,7 +40,7 @@ class FileHandler:
         except Exception as e:
             print(f"\033[91m[FILE ERROR] Failed to write to file: {e}\033[0m")
 
-class SocketHandler:
+class SocketHandler(LogHandlerProtocol):
     def __init__(self, host: str, port: int):
         self.host = host
         self.port = port
@@ -49,7 +53,7 @@ class SocketHandler:
         except Exception as e:
             print(f"\033[91m[SOCKET ERROR] Failed to send log: {e}\033[0m")
 
-class SyslogHandler:
+class SyslogHandler(LogHandlerProtocol):
     def handle(self, text: str) -> None:
         print(f"\033[93m[SYSLOG] {text}\033[0m")
 
