@@ -20,10 +20,14 @@ class ReLogFilter(LogFilterProtocol):
         try:
             self.regex = re.compile(pattern)
         except re.error as e:
-            print(f'regex error: {e}')
+            print(f'\033[91m[REGEX ERROR] Invalid pattern "{pattern}": {e}\033[0m')
 
     def match(self, text: str) -> bool:
-        return bool(self.regex.search(text))
+        try:
+            return bool(self.regex.search(text))
+        except Exception as e:
+            print(f'\033[91m[REGEX ERROR] Matching error: {e}\033[0m')
+            return False
 
 class ConsoleHandler(LogHandlerProtocol):
     def handle(self, text: str) -> None:
